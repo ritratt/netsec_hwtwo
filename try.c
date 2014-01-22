@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	/* Key Derivation using PBKDF2 */
 	printf("Enter passphrase\n>");
 	fgets(passphrase, 16, stdin);
-	gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t *) strlen(salt), iterations, length, (void *) key);
+	gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t ) strlen(salt), iterations, length, (void *) key);
 	printf("%x\n", (unsigned int) key);
 
 	/* Encryption phase */
@@ -66,8 +66,8 @@ int main(int argc, char **argv) {
 	/* Key Derivation using PBKDF2 */
         printf("Enter passphrase\n>");
         fgets(passphrase, 16, stdin);
-        gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t *) strlen(salt), iterations, length, (void *) key_d);
-        printf("%x\n", (unsigned int) key);
+        gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t ) strlen(salt), iterations, length, (void *) key_d);
+        printf("%x\n", (unsigned int) key_d);
 
 	err = gcry_cipher_setkey(hd_d, (void *) key_d, length);
 	if(err != 0) {
@@ -100,7 +100,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-
 	return 0;
 }
 
