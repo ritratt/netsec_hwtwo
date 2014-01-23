@@ -1,0 +1,1 @@
+tech run -> fetches file pointed to by input argument -> runs enc on file -> runc client that send the enc contents to server.
