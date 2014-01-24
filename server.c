@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
 	char sendBuff[1025];
 	time_t ticks; 
 	
-	char *pt = malloc(16);
-	unsigned char *ct = malloc(16);
+	char *pt = calloc(16, sizeof(char*));
+	unsigned char *ct = calloc(16, sizeof(char*));
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	memset(&serv_addr, '0', sizeof(serv_addr));
 	memset(sendBuff, '0', sizeof(sendBuff)); 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 		connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 
 		recv(connfd, ct, 16, 0);
 		puts(ct);
-		pt = dec("qtvr");
+		pt = dec(ct);
 		puts(pt);
 		ticks = time(NULL);
 		snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));

@@ -1,13 +1,15 @@
 #include <gcrypt.h>
 #include <stdio.h>
 
-int main(int argc, char **argv) {
+//char *try(char c);
+
+int main() {
 	
 	gcry_cipher_hd_t hd, hd_mac, hd_d;
 	const char *key = malloc(16), *key_d = malloc(16);
 	size_t length = 16;
 	const int IV = 5844;
-	unsigned char *out = malloc(16);
+	unsigned char *out = calloc(16, sizeof(char *));
 	size_t outsize = 16;
 	const unsigned char *in = "9999999988888888";
 	size_t inlen = 16;
@@ -19,23 +21,25 @@ int main(int argc, char **argv) {
 	FILE *fp = fopen("test.txt", "r+");
 	FILE *fw = fopen("test.txt.enc", "w+");
 	char *plaintext = malloc(16);
+	gcry_error_t err;
+
+	/* Key Derivation using PBKDF2 */
 	fread(plaintext, 1, 16, fp); 
 	puts(plaintext);
 	fclose(fp);
 
-	/* Key Derivation using PBKDF2 */
 	printf("Enter passphrase\n>");
 	fgets(passphrase, 16, stdin);
 	gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t ) strlen(salt), iterations, length, (void *) key);
-	printf("%x\n", (unsigned int) key);
+	printf("%x\n", (unsigned int) (sizeof(key)));
 
 	/* Encryption phase */
-	gcry_error_t err = gcry_cipher_open (&hd, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC, 0);
+	err = gcry_cipher_open (&hd, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC, 0);
 	if (err != 0) {	
 		printf("Error code %d.\n", (int) err);
 		return 1;
 	}
-	err = gcry_cipher_setkey (hd, (void *) key, length);
+	err = gcry_cipher_setkey (hd, key, length);
 	if (err != 0) {	
 		printf("Error code %d.\n", (int) err);
 		return 1;
@@ -49,7 +53,6 @@ int main(int argc, char **argv) {
 	fclose(fw);
 	free(plaintext);
 	free(out);
-
 	plaintext = malloc(16);
 	fp = fopen("test.txt.enc", "r");
 	fread(plaintext, 1, 16, fp);
@@ -69,7 +72,7 @@ int main(int argc, char **argv) {
         gcry_kdf_derive ( (void *) passphrase, sizeof(passphrase), GCRY_KDF_PBKDF2, GCRY_MD_SHA512, (void *) salt, (size_t ) strlen(salt), iterations, length, (void *) key_d);
         printf("%x\n", (unsigned int) key_d);
 
-	err = gcry_cipher_setkey(hd_d, (void *) key_d, length);
+	err = gcry_cipher_setkey(hd_d, key_d, length);
 	if(err != 0) {
 		printf("Unable to set decryption key. Error code %d.\n", err);
 		return 1;
@@ -87,6 +90,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	puts("proper?");
 	puts(out);
 	/* MAC phase */
 	//err = gcry_mac_open ( &hd_mac, 0, 0, NULL);
@@ -99,7 +103,6 @@ int main(int argc, char **argv) {
 		printf("Unable to create MAC handler. Error code %d.\n", (int) err);
 		return 1;
 	}
-	
-	return 0;
+	return out;
 }
 

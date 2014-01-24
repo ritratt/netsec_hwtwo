@@ -7,17 +7,24 @@ int main(int argc, char *argv[])
 	char recvBuff[1024];
 	struct sockaddr_in serv_addr; 
 
-	char *pt = malloc(16);
-	unsigned char *ct = enc("wtver");
-	puts(ct);
-	printf("Printing ct from client\n%s\n", ct);
+	char *pt = calloc(16, sizeof(char *));
+	char *ct = calloc(16, sizeof(char *));
 	
-	FILE *fp = fopen("test.txt", "r+");
-        	if(argc != 2)
+	/* Read plaintext from file */
+	FILE *fp;
+	fp = fopen("test.txt", "r+");
+	fread(pt, sizeof(char *), 16, fp);
+	fclose(fp);
+	puts(pt);
+	ct = enc(pt);
+	puts(ct);
+	
+        if(argc != 5)
 	{
-		printf("\n Usage: %s <ip of server> \n",argv[0]);
+		printf("\n Usage: techrypt < input file > [-d < IP-addr:port >][-l ] \n");
 		return 1;
 	} 
+	filename = argv[1];
 
 	memset(recvBuff, '0',sizeof(recvBuff));
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -42,6 +49,8 @@ int main(int argc, char *argv[])
 		printf("\n Error : Connect Failed \n");
 		return 1;
 	} 
+
+	printf("crap\n");
 	send(sockfd, ct, strlen(ct), 0); 
 	while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
 	{
