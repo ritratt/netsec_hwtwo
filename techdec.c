@@ -11,18 +11,20 @@ int main(int argc, char **argv[]) {
 	
 	if(argc == 3) {
 		FILE *fr = fopen(filename, "r");
-		char *filename_dec = "";
-		strncpy(filename_dec, filename, strlen(filename) - 3);
+		char *filename_dec = "test.dec";
+		//strncpy(filename_dec, filename, strlen(filename) - 2);
 		puts(filename_dec);
 		FILE *fw = fopen(filename_dec, "w+");
-		char *ct = calloc(16, sizeof(char *));
-		fread(ct, 1, 16, fr);
+		int buffsize = 0;
+		if(fseek(fr, 0, SEEK_END) == 0)
+			buffsize = ftell(fr);
+		char *ct = calloc(buffsize + 1, sizeof(char *));
+		fread(ct, 1, buffsize + 1, fr);
 		fclose(fr);
 		char *pt = dec(ct);
 		fwrite(pt, 1, strlen(pt), fw);
 		fclose(fw);
 	}
-
 
 	if(argc == 4) {
 		int port = (int) argv[3];

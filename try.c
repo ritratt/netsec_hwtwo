@@ -6,9 +6,10 @@
 int main() {
 	
 	gcry_cipher_hd_t hd, hd_mac, hd_d;
+	gcry_md_hd_t hd_md_e, hd_md_d;
 	const char *key = malloc(16), *key_d = malloc(16);
 	size_t length = 16;
-	const int IV = 5844;
+	const char *IV = "5844";
 	unsigned char *out = calloc(16, sizeof(char *));
 	size_t outsize = 16;
 	const unsigned char *in = "9999999988888888";
@@ -52,6 +53,7 @@ int main() {
 	fwrite(out, 1, 16, fw);
 	fclose(fw);
 	free(plaintext);
+	char *ct = out;
 	free(out);
 	plaintext = malloc(16);
 	fp = fopen("test.txt.enc", "r");
@@ -59,7 +61,23 @@ int main() {
 	fclose(fp);
 	puts(plaintext);
 	out = malloc(16);
-	
+
+	/* MAC phase */
+	err = gcry_md_open(&hd_md_e, GCRY_MD_SHA512, GCRY_MD_FLAG_HMAC);
+	if (err != 0) {	
+		printf("Unable to create MAC handler. Error code %d.\n", (int) err);
+		return 1;
+	}
+	err = gcry_md_setkey ( hd_md_e, (void *) key, length);
+	if (err != 0) {	
+		printf("Unable to create MAC handler. Error code %d.\n", (int) err);
+		return 1;
+	}
+
+	gcry_md_write(hd_md_e, ct, strlen(ct));
+	char *mac = gcry_md_read(hd_md_e, GCRY_MD_SHA512);
+	printf("Encrypted mac is %x\n", (unsigned int) mac);
+
 	/* Decryption phase */
 	err = gcry_cipher_open(&hd_d, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC, 0);
 	if(err != 0) {
@@ -92,17 +110,23 @@ int main() {
 
 	puts("proper?");
 	puts(out);
+	
 	/* MAC phase */
-	//err = gcry_mac_open ( &hd_mac, 0, 0, NULL);
+	err = gcry_md_open(&hd_md_d, GCRY_MD_SHA512, GCRY_MD_FLAG_HMAC);
 	if (err != 0) {	
 		printf("Unable to create MAC handler. Error code %d.\n", (int) err);
 		return 1;
 	}
-	//err = gcry_mac_setkey ( hd_mac, (void *) key, length);
+	err = gcry_md_setkey ( hd_md_d, (void *) key_d, length);
 	if (err != 0) {	
 		printf("Unable to create MAC handler. Error code %d.\n", (int) err);
 		return 1;
 	}
+
+	gcry_md_write(hd_md_d, out, strlen(out));
+	char *mac_d = gcry_md_read(hd_md_d, GCRY_MD_SHA512);
+	printf("Encrypted mac is %x\n", (unsigned int) mac_d);
+
 	return out;
 }
 

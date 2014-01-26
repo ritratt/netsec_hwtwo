@@ -25,6 +25,7 @@ int main(int argc, char **argv[]) {
 		ct = enc(pt);
 		
 		strncat(filename, ".gt", 3);
+		puts(filename);
 		FILE *fw = fopen(filename, "w+");
 		fwrite(ct, 1, strlen(ct), fw);
 		fclose(fw);
