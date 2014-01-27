@@ -2,7 +2,6 @@
 
 int main(int argc, char **argv[]) {
 	
-
 	int buffsize = 0;
 	if(argc <3 || argc > 4) {
 		printf("techdec < filename >  [-d < port >][-l]\n");
@@ -10,12 +9,24 @@ int main(int argc, char **argv[]) {
 	}
 
 	char *filename = argv[1];
+	char *mode = argv[2];
 	
-	if(argc == 3) {
+	if(argc == 3 && strncmp(mode, "-l", 2) != 0) {
+		printf("Unrecognized mode %s. Usage techdec < filename > [-d <port>][-l]\n", mode);
+		return 2;
+	}
+
+	if(argc == 3 && strncmp(mode, "-l", 2) == 0) {
 		FILE *fr = fopen(filename, "r");
-		char *filename_dec = "test.dec";
-		//strncpy(filename_dec, filename, strlen(filename) - 2);
+		char *filename_dec = malloc(16);
+		strncpy(filename_dec, filename, strlen(filename) - 3);
 		puts(filename_dec);
+		
+		/* Check if a file with decrypted filename already exists. */
+		if(access(filename_dec, F_OK) != -1) {
+			printf("Decrypted file %s already exists. If you would still like to perform decryption then please delete the existing file before proceeding.\n", filename_dec);
+			return 33;
+		}
 		FILE *fw = fopen(filename_dec, "w+");
 		fseek(fr, 0, SEEK_END);
 		buffsize = ftell(fr);

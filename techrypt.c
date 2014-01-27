@@ -18,6 +18,10 @@ int main(int argc, char **argv[]) {
 		return 2;
 	}
 	FILE *fr = fopen(filename, "r");
+	if (fr == NULL) {
+		printf("Error opening file. Make sure that the file name is correct and that it exists.\n");
+		return 3;
+	}
 	int buffsize;
 	fseek(fr, 0, SEEK_END);
 	buffsize = ftell(fr);
@@ -25,10 +29,15 @@ int main(int argc, char **argv[]) {
 	fread(pt, 1, buffsize + 1, fr); 
 	fclose(fr);
 
-	if (argc == 3) {
+	if (argc == 3 && strncmp(mode, "-l", 2) == 0) {
+		strncat(filename, ".gt", 3);
+		if(access(filename, F_OK) != -1) {
+			printf("File %s already exists. If you would still like to perform encryption the please delete the existing file before proceeding.\n", filename);
+			return 33;
+		}
 		ct = enc(pt);
 		puts(pt);
-		strncat(filename, ".gt", 3);
+		
 		FILE *fw = fopen(filename, "w+");
 		fwrite(ct, 1, strlen(ct), fw);
 		fclose(fw);
