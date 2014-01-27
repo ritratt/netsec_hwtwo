@@ -4,14 +4,15 @@ char *enc(char *plaintext);
 char *dec(char *ciphertext);
 
 char *enc(char *plaintext) {
+	printf("dhoble %d\n", strlen(plaintext));
 	gcry_cipher_hd_t hd, hd_mac;
 	gcry_md_hd_t hd_md_e;
         char *key = calloc(16, sizeof(char *));
         size_t length = 16;
         const char *IV = "5844";
-        unsigned char *out = calloc(16, sizeof(char *));
-        size_t outsize = 16;
-        size_t inlen = 16;
+        char *out = calloc(1024, sizeof(char *));
+        size_t outsize = 1024;
+        size_t inlen = 1024;
         char *passphrase = calloc(16, sizeof(char *));
         const char *salt = "NaCl";
         unsigned long iterations = 4096;
@@ -72,15 +73,15 @@ char *dec(char *ciphertext) {
         char *key_d = calloc(16, sizeof(char *));
         size_t length = 16;
         const char *IV = "5844";
-        char *out = calloc(strlen(ciphertext), sizeof(char));
-        size_t outsize = strlen(ciphertext);
+        char *out = calloc(1024, sizeof(char));
+        size_t outsize = 1024;
         char *passphrase = calloc(16, sizeof(char *));
         const char *salt = "NaCl";
         unsigned long iterations = 4096;
         char *keybuffer;
         int retval, err;
 	char *dirty_mac = calloc(64, 1);
-	char *ciphertext_macless = calloc(strlen(ciphertext) - 64 + 1, 1);
+	char *ciphertext_macless = malloc(strlen(ciphertext) - 64);
 	int i = 0;
 	err = gcry_cipher_open(&hd_d, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC, 0);
         if(err != 0) {
@@ -89,9 +90,8 @@ char *dec(char *ciphertext) {
         }
 
 	dirty_mac = strncpy(dirty_mac, ciphertext + strlen(ciphertext) - 64, 64);
-	ciphertext_macless = "\0";
 	printf("%d\n", strlen(ciphertext));
-	ciphertext_macless = strncpy(ciphertext_macless, ciphertext, 1);
+	ciphertext_macless = strncpy(ciphertext_macless, ciphertext, strlen(ciphertext) - 64);
 	printf("\nThe concatenated ct that the decryption receives is %s\n", ciphertext);
 	printf("\nThe macless ct is %s\n", ciphertext_macless);
 	for (i = 0; i < strlen(ciphertext_macless); i++) {
@@ -116,7 +116,7 @@ char *dec(char *ciphertext) {
                 return "1";
         }
 
-        err = gcry_cipher_decrypt(hd_d, out, outsize, ciphertext_macless, strlen(ciphertext_macless));
+        err = gcry_cipher_decrypt(hd_d, out, 1024, ciphertext_macless, 1024);
         if(err != 0) {
                 printf("Unable to decrypt. Error code %d.\n", err);
                 return "1";
@@ -143,7 +143,7 @@ char *dec(char *ciphertext) {
 	}
 	printf("\n");
         printf("Decrypted mac is %s\n", mac_d);
-	printf("pt is %s", out);
+	printf("pt is \n%s", out);
 	if(strcmp(mac_d, dirty_mac) != 0){
 		printf("You're fucked.\n");
 	}
