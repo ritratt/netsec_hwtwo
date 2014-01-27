@@ -17,23 +17,24 @@ int main(int argc, char **argv[]) {
 		printf("Unrecognized mode %s.\n Usage techrypt < input file > [-d < IP-addr:port >][-l ]", mode);
 		return 2;
 	}
+	FILE *fr = fopen(filename, "r");
+	int buffsize;
+	fseek(fr, 0, SEEK_END);
+	buffsize = ftell(fr);
+	rewind(fr);
+	fread(pt, 1, buffsize + 1, fr); 
+	fclose(fr);
 
 	if (argc == 3) {
-		FILE *fr = fopen(filename, "r");
-		fread(pt, 1, 16, fr); //make length suitable
-		fclose(fr);
 		ct = enc(pt);
-		
 		strncat(filename, ".gt", 3);
-		puts(filename);
 		FILE *fw = fopen(filename, "w+");
 		fwrite(ct, 1, strlen(ct), fw);
 		fclose(fw);
 	}
 
-
 	if (argc == 4) {
-		client(filename, ip_addr);
+		client(filename, buffsize, ip_addr);
 		return 0;
 	}
 	return 0;

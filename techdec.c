@@ -2,6 +2,8 @@
 
 int main(int argc, char **argv[]) {
 	
+
+	int buffsize = 0;
 	if(argc <3 || argc > 4) {
 		printf("techdec < filename >  [-d < port >][-l]\n");
 		return 2;
@@ -15,9 +17,9 @@ int main(int argc, char **argv[]) {
 		//strncpy(filename_dec, filename, strlen(filename) - 2);
 		puts(filename_dec);
 		FILE *fw = fopen(filename_dec, "w+");
-		int buffsize = 0;
-		if(fseek(fr, 0, SEEK_END) == 0)
-			buffsize = ftell(fr);
+		fseek(fr, 0, SEEK_END);
+		buffsize = ftell(fr);
+		rewind(fr);
 		char *ct = calloc(buffsize + 1, sizeof(char *));
 		fread(ct, 1, buffsize + 1, fr);
 		fclose(fr);
@@ -28,7 +30,7 @@ int main(int argc, char **argv[]) {
 
 	if(argc == 4) {
 		int port = (int) argv[3];
-		server(filename, port);
+		server(filename, 64, port);
 		return 0;
 	}
 
