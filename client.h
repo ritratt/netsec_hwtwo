@@ -9,8 +9,8 @@ int client(char *filename, int buffsize, char *ip_addr)
 	char recvBuff[1024];
 	struct sockaddr_in serv_addr; 
 
-	char *pt = calloc(16, sizeof(char *));
-	char *ct = calloc(16, sizeof(char *));
+	char *pt = calloc(1024, sizeof(char *));
+	char *ct = calloc(1024, sizeof(char *));
 	
 	/* Read plaintext from file */
 	FILE *fp;
@@ -23,7 +23,7 @@ int client(char *filename, int buffsize, char *ip_addr)
 	fread(pt, sizeof(char *), buffsize + 1, fp);
 	fclose(fp);
 	ct = enc(pt);
-
+	printf("The client is gonna send the ct as %s\n", ct);
 	memset(recvBuff, '0',sizeof(recvBuff));
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{

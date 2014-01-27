@@ -47,9 +47,6 @@ int server(char * filename, int buffsize, int port)
 		ct = calloc(buffsize + 1, sizeof(char *));
 		pt = calloc(buffsize + 1, sizeof(char *));
 		recv(connfd, ct, buffsize + 1, 0);
-		puts("ct is");
-		puts(ct);
-		
 		pt = dec(ct);
 		fwrite(pt, 1, strlen(pt), fw);
 		fclose(fw);

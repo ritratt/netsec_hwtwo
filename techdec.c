@@ -19,10 +19,12 @@ int main(int argc, char **argv[]) {
 		FILE *fw = fopen(filename_dec, "w+");
 		fseek(fr, 0, SEEK_END);
 		buffsize = ftell(fr);
+		printf("Buffsize is %d\n", buffsize);
 		rewind(fr);
-		char *ct = calloc(buffsize + 1, sizeof(char *));
+		char *ct = calloc(buffsize + 1, sizeof(char));
 		fread(ct, 1, buffsize + 1, fr);
 		fclose(fr);
+		puts(ct);
 		char *pt = dec(ct);
 		fwrite(pt, 1, strlen(pt), fw);
 		fclose(fw);
@@ -30,7 +32,7 @@ int main(int argc, char **argv[]) {
 
 	if(argc == 4) {
 		int port = (int) argv[3];
-		server(filename, 64, port);
+		server(filename, 1024, port);
 		return 0;
 	}
 
