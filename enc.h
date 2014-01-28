@@ -7,6 +7,7 @@ char *enc(char *plaintext) {
 	gcry_cipher_hd_t hd, hd_mac;
 	gcry_md_hd_t hd_md_e;
 	int length_16style = 16 * (strlen(plaintext)/16 + 1);
+	printf("16stule is %d\n", length_16style);
         char *key = calloc(16, sizeof(char *));
         size_t length = 16;
         const char *IV = "5844";

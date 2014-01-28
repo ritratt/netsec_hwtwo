@@ -25,11 +25,15 @@ int main(int argc, char **argv[]) {
 		printf("Error opening file. Make sure that the file name is correct and that it exists.\n");
 		return 3;
 	}
-	int buffsize;
+	int buffsize, c;
 	fseek(fr, 0, SEEK_END);
 	buffsize = ftell(fr);
 	rewind(fr);
-	fread(pt, 1, buffsize , fr); 
+	while((c = fgetc(fr)) != EOF && pt < buffsize) 
+		*pt++ = c;
+	*pt = '\0';
+	//fread(pt, 1, buffsize , fr); 
+	puts("File read done.");
 	//fclose(fr);
 	if (argc == 3 && strncmp(mode, "-l", 2) == 0) {
 		strncat(filename, ".gt", 3);
