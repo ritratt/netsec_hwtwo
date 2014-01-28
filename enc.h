@@ -4,6 +4,7 @@ char *enc(char *plaintext);
 char *dec(char *ciphertext);
 
 char *enc(char *plaintext) {
+	puts("Starting encryption");
 	gcry_cipher_hd_t hd, hd_mac;
 	gcry_md_hd_t hd_md_e;
 	int length_16style = 16 * (strlen(plaintext)/16 + 1);
@@ -83,7 +84,7 @@ char *dec(char *ciphertext) {
         char *keybuffer;
         int retval, err;
 	char *dirty_mac = calloc(64, 1);
-	char *ciphertext_macless = malloc(length_16style - 64);
+	char *ciphertext_macless = malloc(length_16style - 65);
 	int i = 0;
 	err = gcry_cipher_open(&hd_d, GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC, 0);
         if(err != 0) {

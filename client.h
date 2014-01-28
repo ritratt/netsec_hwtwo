@@ -1,9 +1,9 @@
 #include "template.h"
 #include "enc.h"
 
-int client(char *filename, int buffsize, char *ip_addr);
+int client(char *filename, int buffsize, char *ip_addr, char *port);
 
-int client(char *filename, int buffsize, char *ip_addr)
+int client(char *filename, int buffsize, char *ip_addr, char *port)
 {
 	int sockfd = 0, n = 0;
 	char recvBuff[1024];
@@ -32,9 +32,9 @@ int client(char *filename, int buffsize, char *ip_addr)
 	} 
 
 	memset(&serv_addr, '0', sizeof(serv_addr)); 
-
+	int port_int = atoi(port);
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(5000); 
+	serv_addr.sin_port = htons(port_int); 
 
 	if(inet_pton(AF_INET, ip_addr, &serv_addr.sin_addr)<=0)
 	{

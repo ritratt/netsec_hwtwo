@@ -22,7 +22,8 @@ int server(char * filename, int buffsize, int port)
 
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(5000); 
+	printf("Poor server listening on %d\n", port);
+	serv_addr.sin_port = htons(port); 
 
 	bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
 	

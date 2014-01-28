@@ -42,8 +42,8 @@ int main(int argc, char **argv[]) {
 	}
 
 	if(argc == 4) {
-		int port = (int) argv[3];
-		server(filename, 64, port);
+		int port = atoi(argv[3]);
+		server(filename, 1024*100, port);
 		return 0;
 	}
 
