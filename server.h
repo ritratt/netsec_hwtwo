@@ -5,6 +5,7 @@ int server(char *filename, int buffsize, int port);
 
 int server(char * filename, int buffsize, int port)
 {
+	puts("Server bleh");
 	int listenfd = 0, connfd = 0;
 	struct sockaddr_in serv_addr; 
 	char *length_desc = calloc(16, 1);
@@ -28,7 +29,6 @@ int server(char * filename, int buffsize, int port)
 	FILE *fw = fopen(filename, "w+");
 	
 	listen(listenfd, 10); 
-
 //	while(1)
 //	{
 		connfd = accept(listenfd, (struct sockaddr*)NULL, NULL); 

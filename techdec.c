@@ -43,7 +43,7 @@ int main(int argc, char **argv[]) {
 
 	if(argc == 4) {
 		int port = (int) argv[3];
-		server(filename, 1024, port);
+		server(filename, 64, port);
 		return 0;
 	}
 
