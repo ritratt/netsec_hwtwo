@@ -23,7 +23,6 @@ int client(char *filename, int buffsize, char *ip_addr, char *port)
 	fread(pt, sizeof(char *), buffsize + 1, fp);
 	fclose(fp);
 	ct = enc(pt);
-	printf("The client is gonna send the ct as %s\n", ct);
 	memset(recvBuff, '0',sizeof(recvBuff));
 	if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -47,27 +46,6 @@ int client(char *filename, int buffsize, char *ip_addr, char *port)
 		printf("\n Error : Connect Failed \n");
 		return 1;
 	} 
-	char *length_descr = "lxdsc";
-	char *sbuffsize = malloc(8);
-	sprintf(sbuffsize, "%d", buffsize);
-	/*puts(sbuffsize);
-	puts("hmmm");
-	//strcat("lxdscr", sbuffsize);
-	puts("well");
-	//send(sockfd, "lxdsc18", 16, 0);
-	close(sockfd);
-	wait(1);
-	connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));*/
 	send(sockfd, ct, strlen(ct), 0); 
-	/*while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0)
-	{
-		recvBuff[n] = 0;
-		if(fputs(recvBuff, stdout) == EOF)
-		    printf("\n Error : Fputs error\n");
-	} 
-
-	if(n < 0)
-		printf("\n Read error \n");
-	*/
 	return 0;
 }

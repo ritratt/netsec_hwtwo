@@ -12,8 +12,8 @@ int main(int argc, char **argv[]) {
 		return 2;
 	}
 
-	char *filename = argv[1];
-	char *mode = argv[2];
+	char *filename = (char *) argv[1];
+	char *mode = (char *) argv[2];
 	if(argc == 3 && strncmp(mode, "-l", 2) != 0) {
 		printf("Unrecognized mode %s.\n Usage techrypt < input file > [-d < IP-addr:port >][-l ]", mode);
 		return 2;
@@ -28,7 +28,6 @@ int main(int argc, char **argv[]) {
 	int buffsize;
 	fseek(fr, 0, SEEK_END);
 	buffsize = ftell(fr);
-	printf("Buffsize in techrypt is %d\n", buffsize);
 	rewind(fr);
 	fread(pt, 1, buffsize , fr); 
 	//fclose(fr);
@@ -36,26 +35,22 @@ int main(int argc, char **argv[]) {
 		strncat(filename, ".gt", 3);
 		if(access(filename, F_OK) != -1) {
 			printf("File %s already exists. If you would still like to perform encryption the please delete the existing file before proceeding.\n", filename);
-			return 33;
+			exit(33);
 		}
 		ct = enc(pt);
-		puts(pt);
-		
 		FILE *fw = fopen(filename, "w+");
 		fwrite(ct, 1, strlen(ct), fw);
 		fclose(fw);
+		puts("Encryption complete and written to file.");
 	}
 
 	
 	if (argc == 4) {
-		char *ip_addr_raw = argv[3];
+		char *ip_addr_raw = (char *) argv[3];
 		ip_addr = strtok(ip_addr_raw,":");
         	char *port = strtok(NULL,":");
-		puts("THIS is how u fared:");
-		puts(ip_addr_raw);
-		puts(ip_addr);
-		puts(port);
 		client(filename, buffsize, ip_addr, port);
+		puts("Encryption complete and transmitted to server.");
 		return 0;
 	}
 	return 0;
